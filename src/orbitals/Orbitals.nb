@@ -1,0 +1,279 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8916,        271]
+NotebookOptionsPosition[      8376,        255]
+NotebookOutlinePosition[      8771,        271]
+CellTagsIndexPosition[      8728,        268]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"a0", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"R", "=", 
+   RowBox[{
+    FractionBox["4", 
+     RowBox[{"81", 
+      SqrtBox["30"], 
+      SuperscriptBox["a0", 
+       FractionBox["3", "2"]]}]], 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}], 
+     SuperscriptBox["a0", "2"]], 
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      FractionBox[
+       SqrtBox[
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}]], 
+       RowBox[{"3", "a0"}]]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Y", "[", "\"\<z2\>\"", "]"}], "=", 
+   RowBox[{
+    SqrtBox[
+     FractionBox["5", 
+      RowBox[{"16", "\[Pi]"}]]], 
+    FractionBox[
+     RowBox[{
+      RowBox[{"2", 
+       SuperscriptBox["z", "2"]}], "-", 
+      SuperscriptBox["x", "2"], "-", 
+      SuperscriptBox["y", "2"]}], 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Y", "[", "\"\<yz\>\"", "]"}], "=", 
+   RowBox[{
+    SqrtBox[
+     FractionBox["15", 
+      RowBox[{"4", "\[Pi]"}]]], 
+    FractionBox[
+     RowBox[{"y", " ", "z"}], 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Y", "[", "\"\<xz\>\"", "]"}], "=", 
+   RowBox[{
+    SqrtBox[
+     FractionBox["15", 
+      RowBox[{"4", "\[Pi]"}]]], 
+    FractionBox[
+     RowBox[{"x", " ", "z"}], 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Y", "[", "\"\<xy\>\"", "]"}], "=", 
+   RowBox[{
+    SqrtBox[
+     FractionBox["15", 
+      RowBox[{"16", "\[Pi]"}]]], 
+    FractionBox[
+     RowBox[{"2", "x", " ", "y"}], 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Y", "[", "\"\<x2-y2\>\"", "]"}], "=", 
+   RowBox[{
+    SqrtBox[
+     FractionBox["15", 
+      RowBox[{"16", "\[Pi]"}]]], 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["x", "2"], "-", 
+      SuperscriptBox["y", "2"]}], 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}]]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"MeshOrbital", "[", "s_", "]"}], ":=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"DiscretizeGraphics", "[", 
+     RowBox[{"RegionPlot3D", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"Abs", "[", 
+          RowBox[{"R", "*", 
+           RowBox[{"Y", "[", "s", "]"}]}], "]"}], ">=", "0.01"}], "\[And]", 
+        RowBox[{
+         RowBox[{"R", "*", 
+          RowBox[{"Y", "[", "s", "]"}]}], ">", "0"}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"y", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"z", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"PlotPoints", "->", "40"}]}], "]"}], "]"}], ",", 
+    RowBox[{"DiscretizeGraphics", "[", 
+     RowBox[{"RegionPlot3D", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"Abs", "[", 
+          RowBox[{"R", "*", 
+           RowBox[{"Y", "[", "s", "]"}]}], "]"}], ">=", "0.01"}], "\[And]", 
+        RowBox[{
+         RowBox[{"R", "*", 
+          RowBox[{"Y", "[", "s", "]"}]}], "<", "0"}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"y", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"z", ",", 
+         RowBox[{"-", "15"}], ",", "15"}], "}"}], ",", 
+       RowBox[{"PlotPoints", "->", "40"}]}], "]"}], "]"}]}], 
+   "}"}]}]}], "Input",
+ CellChangeTimes->{{3.9241757180229273`*^9, 3.924175733324519*^9}, {
+  3.924175771299752*^9, 3.924175826233663*^9}, {3.924176015399506*^9, 
+  3.924176096289571*^9}, {3.924179792467249*^9, 3.92417982213251*^9}, {
+  3.924180222289295*^9, 3.92418046362668*^9}, {3.92418092174905*^9, 
+  3.924181007577942*^9}, {3.9241811029040413`*^9, 3.92418110491591*^9}, {
+  3.924184122630777*^9, 3.9241841399119797`*^9}, {3.924184227557036*^9, 
+  3.9241842365730247`*^9}},
+ CellLabel->"In[58]:=",ExpressionUUID->"62bc3c3f-4f50-4be3-be81-a0dd111edbfd"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"meshNames", "=", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<z2\>\"", ",", "\"\<yz\>\"", ",", "\"\<xz\>\"", ",", "\"\<xy\>\"", 
+     ",", "\"\<x2-y2\>\""}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"meshes", "=", 
+   RowBox[{"MeshOrbital", "/@", "meshNames"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"scale", "=", 
+   RowBox[{"1", "/", 
+    RowBox[{"Max", "[", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Max", "[", 
+         RowBox[{"Norm", "/@", 
+          RowBox[{"MeshCoordinates", "[", "#", "]"}]}], "]"}], "&"}], ",", 
+       "meshes", ",", 
+       RowBox[{"{", "2", "}"}]}], "]"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"meshesScaled", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"RegionResize", "[", 
+       RowBox[{"#", ",", 
+        RowBox[{
+         RowBox[{"RegionBounds", "[", "#", "]"}], "*", "scale"}]}], "]"}], 
+      "&"}], ",", "meshes", ",", 
+     RowBox[{"{", "2", "}"}]}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.924183790936051*^9, 3.924183813911775*^9}, {
+  3.9241852592818747`*^9, 3.924185266765483*^9}, {3.92418547901015*^9, 
+  3.924185479210909*^9}},ExpressionUUID->"3dff0ae8-3b0e-4de1-9ad4-\
+09e8531f88b3"],
+
+Cell[BoxData[
+ RowBox[{"Do", "[", 
+  RowBox[{
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "s", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"SetDirectory", "[", 
+       RowBox[{"NotebookDirectory", "[", "]"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"s", "=", 
+       RowBox[{"meshNames", "[", 
+        RowBox[{"[", "i", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"PrintTemporary", "[", 
+       RowBox[{"\"\<Exporting d\>\"", "<>", "s", "<>", "\"\<+.obj\>\""}], 
+       "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Export", "[", 
+       RowBox[{
+        RowBox[{"\"\<d\>\"", "<>", "s", "<>", "\"\<+.obj\>\""}], ",", 
+        RowBox[{"meshesScaled", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", "\"\<OBJ\>\""}], "]"}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"PrintTemporary", "[", 
+       RowBox[{"\"\<Exporting d\>\"", "<>", "s", "<>", "\"\<-.obj\>\""}], 
+       "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Export", "[", 
+       RowBox[{
+        RowBox[{"\"\<d\>\"", "<>", "s", "<>", "\"\<-.obj\>\""}], ",", 
+        RowBox[{"meshesScaled", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "2"}], "]"}], "]"}], ",", "\"\<OBJ\>\""}], "]"}], 
+      ";"}]}], "\[IndentingNewLine]", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", 
+     RowBox[{"Range", "[", 
+      RowBox[{"Length", "[", "meshNames", "]"}], "]"}]}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.924181197715753*^9, 3.9241814328620377`*^9}, {
+  3.924185378040638*^9, 3.924185454115905*^9}},
+ CellLabel->
+  "In[158]:=",ExpressionUUID->"937bee60-7de9-4afd-a4e6-74efdea62a11"]
+},
+WindowSize->{Full, Full},
+WindowMargins->{{352, Automatic}, {Automatic, 50}},
+FrontEndVersion->"12.3 for Mac OS X x86 (64-bit) (July 9, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"3e4b43ed-9c36-437f-8eef-5f3976a11139"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 4834, 151, 401, "Input",ExpressionUUID->"62bc3c3f-4f50-4be3-be81-a0dd111edbfd"],
+Cell[5395, 173, 1292, 37, 94, "Input",ExpressionUUID->"3dff0ae8-3b0e-4de1-9ad4-09e8531f88b3"],
+Cell[6690, 212, 1682, 41, 178, "Input",ExpressionUUID->"937bee60-7de9-4afd-a4e6-74efdea62a11"]
+}
+]
+*)
+
