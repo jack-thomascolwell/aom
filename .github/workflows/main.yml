@@ -1,11 +1,14 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+name: deploy-vite
+run-name: ${{ github.actor }} is deploying Vite to GitHub pages
 on:
   push:
     branches: ['main']
   workflow_dispatch:
 jobs:
-  check-bats-version:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
