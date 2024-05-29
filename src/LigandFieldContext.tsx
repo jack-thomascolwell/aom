@@ -2,10 +2,24 @@ import React, { Key } from 'react';
 import { useImmerReducer } from "use-immer";
 
 export type LigandField = {
-  ligands: Array<Ligand>,
+  ligands: Array<LigandInput>,
   selected: number,
   selectedState: number,
 }
+
+export type LigandInput = {
+  start: LigandStateInput,
+  end: LigandStateInput,
+  fixed: boolean,
+};
+
+export type LigandStateInput = {
+  x: string,
+  y: string,
+  z: string,
+  esigma: string,
+  epi: string,
+};
 
 export type Ligand = {
   start: LigandState,
@@ -59,28 +73,44 @@ export function interpolate(ligand: Ligand, selectedState: number): LigandState 
 }
 
 
-export function validateLigand(ligand: Ligand): boolean {
-  return (ligand.fixed || validateLigandState(ligand.end)) && validateLigandState(ligand.start);
+export function validateLigandInput(ligandInput: LigandInput): Ligand | null {
+  const start = validateLigandStateInput(ligandInput.start);
+  const end = (ligandInput.fixed) ? start : validateLigandStateInput(ligandInput.end);
+
+  if (start === null || end === null) return null;
+
+  return { start, end, fixed: ligandInput.fixed };
 }
 
-export function validateLigandState(ligand: LigandState): boolean {
-  return (typeof(ligand.x) === 'number' && !isNaN(ligand.x) && isFinite(ligand.x) && 
-          typeof(ligand.y) === 'number' && !isNaN(ligand.y) && isFinite(ligand.y) &&
-          typeof(ligand.z) === 'number' && !isNaN(ligand.z) && isFinite(ligand.z) &&
-          typeof(ligand.esigma) === 'number' && !isNaN(ligand.esigma) && isFinite(ligand.esigma) &&
-          typeof(ligand.epi) === 'number' && !isNaN(ligand.epi) && isFinite(ligand.epi) &&
-          !(ligand.x===0 && ligand.y===0 && ligand.z===0));
+export function validateLigandStateInput(ligandStateInput: LigandStateInput): LigandState | null {
+  const ligandState = {
+    x: parseFloat(ligandStateInput.x),
+    y: parseFloat(ligandStateInput.y),
+    z: parseFloat(ligandStateInput.z),
+    esigma: parseFloat(ligandStateInput.esigma),
+    epi: parseFloat(ligandStateInput.epi),
+  }
+
+  if (typeof(ligandState.x) !== 'number' || isNaN(ligandState.x) || !isFinite(ligandState.x) ||
+      typeof(ligandState.y) !== 'number' || isNaN(ligandState.y) || !isFinite(ligandState.y) ||
+      typeof(ligandState.z) !== 'number' || isNaN(ligandState.z) || !isFinite(ligandState.z) ||
+      typeof(ligandState.esigma) !== 'number' || isNaN(ligandState.esigma) || !isFinite(ligandState.esigma) ||
+      typeof(ligandState.epi) !== 'number' || isNaN(ligandState.epi) || !isFinite(ligandState.epi) ||
+      (ligandState.x === 0 && ligandState.y === 0 && ligandState.z === 0))
+    return null;
+
+  return ligandState;
 }
 
 export type AddAction = {
   type: 'added',
-  esigma?: number,
-  epi?: number,
+  esigma?: string,
+  epi?: string,
 }
 
 export type ImportAction = {
   type: 'imported',
-  ligands: Array<Ligand>,
+  ligands: Array<LigandInput>,
 }
 
 export type DeleteAction = {
@@ -93,7 +123,7 @@ export type ChangeValueAction = {
   index: number,
   state: 'start' | 'end',
   key: 'x' | 'y' | 'z' | 'esigma' | 'epi',
-  value: number,
+  value: string,
 }
 
 export type ChangeFixedAction = {
@@ -126,18 +156,18 @@ const LigandFieldDispatchContext = React.createContext((() => {}) as React.Dispa
 const initialLigandField: LigandField = {
   ligands: [{
     start: {
-      x: Infinity,
-      y: Infinity, 
-      z: Infinity,
-      esigma: Infinity,
-      epi: Infinity,
+      x: '',
+      y: '', 
+      z: '',
+      esigma: '',
+      epi: '',
     },
     end: {
-      x: Infinity,
-      y: Infinity, 
-      z: Infinity,
-      esigma: Infinity,
-      epi: Infinity,
+      x: '',
+      y: '', 
+      z: '',
+      esigma: '',
+      epi: '',
     },
     fixed: true,
   }],
@@ -145,44 +175,47 @@ const initialLigandField: LigandField = {
   selectedState: 0,
 };
 
-export function CSVtoLigands(csv: string): Array<Ligand> | 'error' {
+export function CSVtoLigands(csv: string): Array<LigandInput> | null {
   const lines = csv.split(/\n/);
-  const ligands = new Array<Ligand>(lines.length);
+  const ligands = new Array<LigandInput>(lines.length);
   for (let l = 0; l < lines.length; l++) {
     const cells = lines[l].split(/,/);
-    if (cells.length != 11) return 'error';
-    const numericCells = Array<number>(cells.length);
+    if (cells.length != 11) return null;
     for (let c = 0; c < cells.length; c++) {
       const value = parseFloat(cells[c]);
-      if (value === undefined || isNaN(value) || !isFinite(value)) return 'error';
-      numericCells[c] = value;
+      if (value === undefined || isNaN(value) || !isFinite(value)) return null;
     }
+    console.log(`line ${l}`)
+    console.log(cells[10])
+    console.log(Boolean(cells[10]))
     ligands[l] = {
       start: {
-        x: numericCells[0],
-        y: numericCells[1],
-        z: numericCells[2],
-        esigma: numericCells[3],
-        epi: numericCells[4],
+        x: cells[0],
+        y: cells[1],
+        z: cells[2],
+        esigma: cells[3],
+        epi: cells[4],
       },
       end: {
-        x: numericCells[5],
-        y: numericCells[6],
-        z: numericCells[7],
-        esigma: numericCells[8],
-        epi: numericCells[9],
+        x: cells[5],
+        y: cells[6],
+        z: cells[7],
+        esigma: cells[8],
+        epi: cells[9],
       },
-      fixed: Boolean(numericCells[10])
+      fixed: cells[10] === '1',
     }
   }
   return ligands;
 }
 
-export function ligandsToCSV(ligands: Array<Ligand>): string | 'error' {
-  return ligands.map(ligand => {
-    if (!validateLigand(ligand)) return '';
-    let {start, end} = ligand;
-    if (ligand.fixed) end = start;
+export function ligandsToCSV(ligands: Array<LigandInput>): string | null {
+  return ligands.map(ligandInput => {
+    const ligand = validateLigandInput(ligandInput);
+    if (ligand === null) return null;
+
+    const start = ligand.start;
+    const end = (ligand.fixed) ? start : ligand.end;
     return [start.x, start.y, start.z, start.esigma, start.epi, end.x, end.y, end.z, end.esigma, end.epi, ligand.fixed ? 1 : 0].join(',')
   }).join('\n');
 }
@@ -191,30 +224,30 @@ function ligandFieldReducer(ligandField: LigandField, action: Action) {
   switch (action.type) {
     case 'added': {
       action = action as AddAction;
-      const newLigand = {
+      const newLigand: LigandInput = {
         start: {
-          x: Infinity,
-          y: Infinity,
-          z: Infinity,
-          esigma: action.esigma !== undefined ? action.esigma : Infinity,
-          epi: action.epi !== undefined ? action.epi : Infinity,
+          x: '',
+          y: '',
+          z: '',
+          esigma: action.esigma !== undefined ? action.esigma : '',
+          epi: action.epi !== undefined ? action.epi : '',
         },
         end: {
-          x: Infinity,
-          y: Infinity,
-          z: Infinity,
-          esigma: action.esigma !== undefined ? action.esigma : Infinity,
-          epi: action.epi !== undefined ? action.epi : Infinity,
+          x: '',
+          y: '',
+          z: '',
+          esigma: action.esigma !== undefined ? action.esigma : '',
+          epi: action.epi !== undefined ? action.epi : '',
         },
         fixed: true,
       }
 
-      const isEmpty = (ligandState: LigandState) => (
-        ligandState.x === Infinity &&
-        ligandState.y === Infinity &&
-        ligandState.z === Infinity &&
-        ligandState.esigma === Infinity
-        && ligandState.epi === Infinity);
+      const isEmpty = (ligandStateInput: LigandStateInput) => (
+        ligandStateInput.x === '' &&
+        ligandStateInput.y === '' &&
+        ligandStateInput.z === '' &&
+        ligandStateInput.esigma === ''
+        && ligandStateInput.epi === '');
 
       if (ligandField.ligands.length === 1 && isEmpty(ligandField.ligands[0].start) && isEmpty(ligandField.ligands[0].end) && ligandField.ligands[0].fixed && !(action.esigma === undefined || action.epi === undefined))
         ligandField.ligands[0] = newLigand;

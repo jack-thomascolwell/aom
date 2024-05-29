@@ -1,8 +1,11 @@
 import React from 'react';
 import { Paper, Stack, Typography, Fab, Menu, MenuItem, Divider, Tooltip } from '@mui/material';
 import {Add, Upload, Download} from '@mui/icons-material';
-import LigandInput from './LigandInput';
-import { useLigandField, useLigandFieldDispatch, Ligand, AddAction, ImportAction, ligandsToCSV, CSVtoLigands} from './LigandFieldContext';
+import LigandInputComponent from './LigandInput';
+import { useLigandField, useLigandFieldDispatch, LigandInput, AddAction, ImportAction, ligandsToCSV, CSVtoLigands} from './LigandFieldContext';
+import presetLigandFields from './presets/LigandFields';
+import presetLigandEnergies from './presets/LigandEnergies';
+
 
 export default function LigandFieldInput(props: { sx?: any }) {
     const ligandField = useLigandField();
@@ -12,7 +15,7 @@ export default function LigandFieldInput(props: { sx?: any }) {
     const handleNewLigandClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setNewLigandAnchorEl(Boolean(newLigandAnchorEl) ? null : event.currentTarget);
     };
-    const handleNewLigandClose = (values: {failiure?: boolean, esigma?: number, epi?:number}) => {
+    const handleNewLigandClose = (values: {failiure?: boolean, esigma?: string, epi?:string}) => {
         return () => {
             setNewLigandAnchorEl(null);
             if (values.failiure) return;
@@ -30,7 +33,7 @@ export default function LigandFieldInput(props: { sx?: any }) {
     const handleImportLigandFieldClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setImportLigandFieldAnchorEl(Boolean(newLigandAnchorEl) ? null : event.currentTarget);
     };
-    const handleImportLigandFieldClose = (values: {failiure?: boolean, ligands?: Array<Ligand>}) => {
+    const handleImportLigandFieldClose = (values: {failiure?: boolean, ligands?: Array<LigandInput>}) => {
         return () => {
             setImportLigandFieldAnchorEl(null);
             if (values.failiure || values.ligands === undefined) return;
@@ -55,14 +58,16 @@ export default function LigandFieldInput(props: { sx?: any }) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const ligands = CSVtoLigands(e.target?.result as string);
-            if (ligands === 'error') handleImportLigandFieldClose({failiure: true})();
+            if (ligands === null) handleImportLigandFieldClose({failiure: true})();
             else handleImportLigandFieldClose({ligands})();
         };
         reader.readAsText(file);
     };
 
     const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const file = new Blob([ligandsToCSV(ligandField.ligands)], { type: 'text/csv' });
+        const csvString = ligandsToCSV(ligandField.ligands);
+        if (csvString === null) return;
+        const file = new Blob([csvString], { type: 'text/csv' });
         const a = document.createElement('a');
         a.setAttribute('download', 'ligand-field.csv');
         a.setAttribute('href', URL.createObjectURL(file));
@@ -96,94 +101,21 @@ export default function LigandFieldInput(props: { sx?: any }) {
                 </label>
                 <MenuItem onClick={handleImportLigandFieldClose({ligands: []})}>Delete all</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleImportLigandFieldClose({ligands: [
-                    {
-                        start: { x: 0, y: 0, z: 1, esigma: 1, epi: 0 },
-                        end: { x: 0, y: 0, z: 1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 0, y: 1, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 0, y: 1, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: -1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        end: { x: -1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 0, y: -1, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 0, y: -1, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 0, y: 0, z: -1, esigma: 1, epi: 0 },
-                        end: { x: 0, y: 0, z: -1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                ]})}>Oh</MenuItem>
-                <MenuItem onClick={handleImportLigandFieldClose({ligands: [
-                    {
-                        start: { x: 1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 0, y: 1, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 0, y: 1, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: -1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        end: { x: -1, y: 0, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 0, y: -1, z: 0, esigma: 1, epi: 0 },
-                        end: { x: 0, y: -1, z: 0, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                ]})}>D4h</MenuItem>
-                <MenuItem onClick={handleImportLigandFieldClose({ligands: [
-                    {
-                        start: { x: 1, y: 1, z: 1, esigma: 1, epi: 0 },
-                        end: { x: 1, y: 1, z: 1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: -1, y: -1, z: 1, esigma: 1, epi: 0 },
-                        end: { x: -1, y: -1, z: 1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: 1, y: -1, z: -1, esigma: 1, epi: 0 },
-                        end: { x: 1, y: -1, z: -1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                    {
-                        start: { x: -1, y: 1, z: -1, esigma: 1, epi: 0 },
-                        end: { x: -1, y: 1, z: -1, esigma: 1, epi: 0 },
-                        fixed: true
-                    },
-                ]})}>Td</MenuItem>
+                { presetLigandFields.map((preset) => 
+                    preset === 'divider' ? <Divider /> : <MenuItem onClick={handleImportLigandFieldClose({ ligands: preset.ligands })}>{preset.name}</MenuItem>
+                )}
             </Menu>
             <Menu anchorEl={newLigandAnchorEl} open={Boolean(newLigandAnchorEl)} onClose={handleNewLigandClose({failiure: true})}>
                 <MenuItem onClick={handleNewLigandClose({})}>custom</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleNewLigandClose({esigma: 1, epi: 0})}>&sigma;-only</MenuItem>
-                <MenuItem onClick={handleNewLigandClose({esigma: 1, epi: 1})}>&pi;-donor</MenuItem>
-                <MenuItem onClick={handleNewLigandClose({esigma: 1, epi: -1})}>&pi;-acceptor</MenuItem>
+                { presetLigandEnergies.map((preset) =>
+                    preset === 'divider' ? <Divider /> : <MenuItem onClick={handleNewLigandClose({esigma: preset.esigma, epi: preset.epi})}>{preset.name}</MenuItem>
+                )}
             </Menu>
             <Divider orientation='horizontal' />
             {
                 ligandField.ligands.map((ligand,i) => (
-                    <LigandInput key={i} sx={{width: '100%'}} index={i} />
+                    <LigandInputComponent key={i} sx={{width: '100%'}} index={i} />
                 ))
             }
         </Paper>

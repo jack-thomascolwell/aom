@@ -1,16 +1,16 @@
 import React from 'react';
 import { TextField, IconButton, Stack, Tooltip} from '@mui/material'
 import { ArrowDownward, ArrowUpward, Close, SubdirectoryArrowRight }from '@mui/icons-material';
-import { useLigandField, useLigandFieldDispatch, validateLigandState, ChangeValueAction, FocusAction, BlurAction, ChangeFixedAction, DeleteAction} from './LigandFieldContext';
+import { useLigandField, useLigandFieldDispatch, validateLigandStateInput, ChangeValueAction, FocusAction, BlurAction, ChangeFixedAction, DeleteAction} from './LigandFieldContext';
 import CartesianInput from "./CartesianInput";
 
-export default function LigandInput(props: {sx?: any, index: number}) {
+export default function LigandInputComponent(props: {sx?: any, index: number}) {
     const ligandField = useLigandField();
     const dispatch = useLigandFieldDispatch();
     
     const index = props.index;
     if (index < 0 || index >= ligandField.ligands.length) throw Error('Index out of bounds');
-    const ligand = ligandField.ligands[index];
+    const ligandInput = ligandField.ligands[index];
 
     const sanitizeValue = (value: number) => {
         if (value === Infinity || value === undefined || value === null) return '';
@@ -23,18 +23,12 @@ export default function LigandInput(props: {sx?: any, index: number}) {
             const key = event.target.name;
             if (key !== 'x' && key !== 'y' && key !== 'z' && key !== 'esigma' && key !== 'epi') throw Error('Invalid key');
 
-            const value = event.target.value;
-            let numericValue: number;
-            if (value === undefined || value === '') numericValue = Infinity;
-            else if (value === '-') numericValue = -Infinity;
-            else numericValue = parseFloat(value);
-
             const action: ChangeValueAction = {
                 type: 'changedValue',
                 index: index,
                 state: state,
                 key: key,
-                value: numericValue,
+                value: event.target.value,
             }
             dispatch(action);
         };
@@ -59,12 +53,10 @@ export default function LigandInput(props: {sx?: any, index: number}) {
     };
 
     const handleChangeFixed = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const value = !ligand.fixed;
-
         const action: ChangeFixedAction = {
             type: 'changedFixed',
             index: index,
-            value: value,
+            value: !ligandInput.fixed,
         }
         dispatch(action);
     };
@@ -85,30 +77,30 @@ export default function LigandInput(props: {sx?: any, index: number}) {
                     onFocus={ handleFocus('start') }
                     onBlur={ handleBlur }
                     value={{
-                        x: sanitizeValue(ligand.start.x),
-                        y: sanitizeValue(ligand.start.y),
-                        z: sanitizeValue(ligand.start.z)
+                        x: ligandInput.start.x,
+                        y: ligandInput.start.y,
+                        z: ligandInput.start.z
                     }} />
                 <div css={{width: '3em'}}>
                     <TextField autoComplete='off' name='esigma' label='e&sigma;' variant='standard' fullWidth
                         onChange={ handleChangeValue('start') }
                         onFocus={ handleFocus('start') }
                         onBlur={ handleBlur }
-                        value={ sanitizeValue(ligand.start.esigma) } />
+                        value={ ligandInput.start.esigma } />
                 </div>
                 <div css={{width: '3em'}}>
                     <TextField autoComplete='off' name='epi' label='e&pi;' variant='standard' fullWidth
                         onChange={ handleChangeValue('start') }
                         onFocus={ handleFocus('start') }
                         onBlur={ handleBlur }
-                        value={  sanitizeValue(ligand.start.epi) } />
+                        value={  ligandInput.start.epi } />
                 </div>
                 
                 <IconButton sx={{marginLeft: 'auto'}}
                     onClick={ handleChangeFixed }
-                    disabled={ ligand.fixed && !validateLigandState(ligand.start) }>
-                    <Tooltip title={ ligand.fixed ? 'Vary ligand' : 'Fix ligand'} arrow>
-                        { ligand.fixed ? <ArrowDownward /> : <ArrowUpward /> }
+                    disabled={ ligandInput.fixed && validateLigandStateInput(ligandInput.start)===null }>
+                    <Tooltip title={ ligandInput.fixed ? 'Vary ligand' : 'Fix ligand'} arrow>
+                        { ligandInput.fixed ? <ArrowDownward /> : <ArrowUpward /> }
                     </Tooltip>
                 </IconButton>
                 <IconButton onClick={ handleDelete } >
@@ -117,7 +109,7 @@ export default function LigandInput(props: {sx?: any, index: number}) {
                     </Tooltip>
                 </IconButton>
             </Stack>
-            { ligand.fixed ? null :
+            { ligandInput.fixed ? null :
                 <Stack direction='row' justifyContent='flex-start' alignItems='center' spacing={1} useFlexGap >
                     <SubdirectoryArrowRight fontSize='large'/>
                     <CartesianInput sx={{width: '36%'}}
@@ -125,20 +117,20 @@ export default function LigandInput(props: {sx?: any, index: number}) {
                     onFocus={ handleFocus('end') }
                     onBlur={ handleBlur }
                     value={{
-                        x: sanitizeValue(ligand.end.x),
-                        y: sanitizeValue(ligand.end.y),
-                        z: sanitizeValue(ligand.end.z)
+                        x: ligandInput.end.x,
+                        y: ligandInput.end.y,
+                        z: ligandInput.end.z
                     }} />
                     <TextField autoComplete='off' name='esigma' label='e&sigma;' variant='standard' sx={{width: '12%'}}
                         onChange={ handleChangeValue('end') }
                         onFocus={ handleFocus('end') }
                         onBlur={ handleBlur }
-                        value={ sanitizeValue(ligand.end.esigma) } />
+                        value={ ligandInput.end.esigma } />
                     <TextField autoComplete='off' name='epi' label='e&pi;' variant='standard' sx={{width: '12%'}}
                         onChange={ handleChangeValue('end') }
                         onFocus={ handleFocus('end') }
                         onBlur={ handleBlur }
-                        value={  sanitizeValue(ligand.end.epi) } />
+                        value={ ligandInput.end.epi } />
                 </Stack>
             }
         </Stack>

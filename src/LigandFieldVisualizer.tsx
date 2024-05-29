@@ -7,7 +7,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { CheckBox, CheckBoxOutlineBlank, Download, ArrowDropDown, Square } from '@mui/icons-material';
-import { Ligand, LigandState, interpolate, useLigandField, validateLigand } from './LigandFieldContext';
+import { Ligand, LigandState, interpolate, useLigandField, validateLigandInput } from './LigandFieldContext';
 import orbitals from './orbitals/Orbitals';
 
 export default function LigandVisualizerComponent(props: { sx?: any}) {
@@ -100,12 +100,15 @@ export default function LigandVisualizerComponent(props: { sx?: any}) {
         && ligandState.epi === Infinity);
     const checkInfinity = (v: number) => isFinite(v) ? v : 0;
     const epiScale = (() => {
-        const epiMagnitudeArray = ligandField.ligands.filter((ligand, i) => (!isEmpty(ligand.start) && (ligand.fixed || !isEmpty(ligand.end)))).map((ligand, i) => {
+        let max = 0;
+        for (const ligandInput of ligandField.ligands) {
+            const ligand = validateLigandInput(ligandInput);
+            if (ligand === null) continue;
             const state = interpolate(ligand, ligandField.selectedState);
-            if (state === null) return 0;
-            return Math.abs(state.epi);
-        });
-        return epiMagnitudeArray.length === 0 ? 0 : Math.max(...epiMagnitudeArray);
+            if (state === null) continue;
+            max = Math.max(max, Math.abs(state.epi));
+        }
+        return max;
     })();
     
     return (
@@ -138,8 +141,9 @@ export default function LigandVisualizerComponent(props: { sx?: any}) {
                     <scene quaternion={zAxisFix} background={new Three.Color(theme.palette.background.paper)}>
                         { axes ? <axesHelper args={[1.25]} /> : null }
                         {
-                            ligandField.ligands.map((ligand,i) => {
-                                if (!validateLigand(ligand)) return (<></>);
+                            ligandField.ligands.map((ligandInput,i) => {
+                                const ligand = validateLigandInput(ligandInput);
+                                if (ligand === null) return (<></>);
                                 const state = interpolate(ligand, ligandField.selectedState);
                                 if (state === null) return (<></>);
                                 const { x, y, z, epi } = state;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper } from '@mui/material';
-import { useLigandField, validateLigand, useLigandFieldDispatch, HoverAction, interpolate, toSpherical } from './LigandFieldContext';
+import { useLigandField, validateLigandInput, useLigandFieldDispatch, HoverAction, interpolate, toSpherical } from './LigandFieldContext';
 import { ChartsAxisHighlight, ChartsClipPath, ChartsTooltip, ChartsXAxis, ChartsYAxis, LinePlot, ResponsiveChartContainer, useDrawingArea, useXScale } from '@mui/x-charts';
 import useId from '@mui/utils/useId';
 import { ScaleLinear } from 'd3-scale';
@@ -52,15 +52,16 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
         const rxnCoordinate = step / steps;
         let matrix = new Array<number>(25);
         let energy = [0,0,0,0,0];
-        ligandField.ligands.filter(validateLigand).forEach((ligand, i) => {
-            const start = ligand.start;
-            const end = (ligand.fixed ? start : ligand.end);
+        for (const ligandInput of ligandField.ligands) {
+            const ligand = validateLigandInput(ligandInput);
+            if (ligand === null) continue;
             const state = interpolate(ligand, rxnCoordinate);
-            if (state === null) return;
+            if (state === null) continue;
+            
             const { x, y, z, esigma, epi } = state;
 
             const angles = toSpherical(x,y,z);
-            if (angles === null) return;
+            if (angles === null) continue;
             const {theta, phi} = angles;
             
             const mat = [
@@ -74,8 +75,8 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
 
             matrix = matrix.map((x,j) => x + mat[j]);
             energy = energy.map((x,j) => x + esigma*mat2[j*5] + epi*(mat[j*5+1] + mat[j*5+2]));
-        });
-
+        }
+        
         const floor = (x:number) => (Math.abs(x) < 1e-8 ? 0 : x);
         
         matrices[step] = matrix;
@@ -94,7 +95,7 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
     /* Handle mouse events to get hovered x value */
     const svgRef = React.useRef<SVGElement>(null);
     const handleHover = (x: number | null) => {
-        if (x === null) x = Math.floor(ligandField.selectedState + 0.5);
+        if (x === null) return;//x = Math.floor(ligandField.selectedState + 0.5);
         const action: HoverAction = {
             type: 'hovered',
             selectedState: Math.floor(x * steps + 0.5) / steps,
@@ -109,7 +110,7 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
                 ref={svgRef}
                 xAxis={[{
                     dataKey: 'rxnCoordinate',
-                    valueFormatter: (value) => value.toString(),
+                    valueFormatter: value => `${(Math.max(0,Math.min(1,value)) * 100).toFixed(0)}%`,
                     min: 0,
                     max: 1,
                 }]}
@@ -126,8 +127,8 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
                 <ChartsClipPath id={clipPathId} />
                 <ChartsTooltip />
                 <ChartsAxisHighlight />
-                <ChartsXAxis />
-                {/* <ChartsYAxis /> */}
+                <ChartsXAxis label={`reaction coordinate = ${`${(Math.max(0,Math.min(1,ligandField.selectedState)) * 100).toFixed(0)}%`}`}/>
+                <ChartsYAxis label='one-electron energy'/>
                 <XValue svgRef={svgRef} onChange={handleHover} selectedState={ligandField.selectedState}/>
             </ResponsiveChartContainer>
             </div>
