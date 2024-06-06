@@ -59,7 +59,6 @@ export function interpolate(ligand: Ligand, selectedState: number): LigandState 
 
   const cosTheta = Math.cos(selectedState * Math.PI * 0.5);
   const sinTheta = Math.sin(selectedState * Math.PI * 0.5);
-  console.log(`t=${selectedState} cosTheta: ${cosTheta} sinTheta: ${sinTheta}`)
 
   const rStart = Math.sqrt(start.x * start.x + start.y * start.y + start.z * start.z);
   const rEnd = Math.sqrt(end.x * end.x + end.y * end.y + end.z * end.z);
@@ -72,8 +71,6 @@ export function interpolate(ligand: Ligand, selectedState: number): LigandState 
 
   const esigma = (1 - selectedState) * start.esigma + selectedState * end.esigma;
   const epi = (1 - selectedState) * start.epi + selectedState * end.epi;
-
-  console.log(`x: (${start.x}, ${end.x}) -> ${x}, y: (${start.y}, ${end.y}) -> ${y}, z: (${start.z}, ${end.z}) -> ${z}, esigma: ${esigma}, epi: ${epi}`)
 
   return { x, y, z, esigma, epi };
 }
@@ -191,9 +188,6 @@ export function CSVtoLigands(csv: string): Array<LigandInput> | null {
       const value = parseFloat(cells[c]);
       if (value === undefined || isNaN(value) || !isFinite(value)) return null;
     }
-    console.log(`line ${l}`)
-    console.log(cells[10])
-    console.log(Boolean(cells[10]))
     ligands[l] = {
       start: {
         x: cells[0],
