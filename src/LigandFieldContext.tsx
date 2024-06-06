@@ -54,20 +54,26 @@ export function toCartesian(theta: number, phi: number): {x: number, y: number, 
 
 export function interpolate(ligand: Ligand, selectedState: number): LigandState | null {
   const start = ligand.start;
-  const end = (ligand.fixed ? ligand.start : ligand.end);
+  if (ligand.fixed) return start;
+  const end = ligand.end;
 
-  const anglesStart = toSpherical(start.x, start.y, start.z);
-  const anglesEnd = toSpherical(end.x, end.y, end.z);
-  if (anglesStart === null || anglesEnd === null) return null;
-  // edge case where phi is ambiguous
-  if (anglesStart.phi === 0) anglesStart.phi = anglesEnd.phi;
-  if (anglesEnd.phi === 0) anglesEnd.phi = anglesStart.phi;
-  const theta = (1 - selectedState) * anglesStart.theta + selectedState * anglesEnd.theta;
-  const phi = (1 - selectedState) * anglesStart.phi + selectedState * anglesEnd.phi;
-  const {x, y, z} = toCartesian(theta, phi);
+  const cosTheta = Math.cos(selectedState * Math.PI * 0.5);
+  const sinTheta = Math.sin(selectedState * Math.PI * 0.5);
+  console.log(`t=${selectedState} cosTheta: ${cosTheta} sinTheta: ${sinTheta}`)
+
+  const rStart = Math.sqrt(start.x * start.x + start.y * start.y + start.z * start.z);
+  const rEnd = Math.sqrt(end.x * end.x + end.y * end.y + end.z * end.z);
+  if (rStart === 0 || rEnd === 0) return null;
+
+  // compute current x,y,z as a point on the parametric arc from the start to end with radius 1
+  const x = (cosTheta * start.x / rStart)+ (sinTheta * end.x / rEnd);
+  const y = (cosTheta * start.y / rStart)+ (sinTheta * end.y / rEnd);
+  const z = (cosTheta * start.z / rStart)+ (sinTheta * end.z / rEnd);
 
   const esigma = (1 - selectedState) * start.esigma + selectedState * end.esigma;
   const epi = (1 - selectedState) * start.epi + selectedState * end.epi;
+
+  console.log(`x: (${start.x}, ${end.x}) -> ${x}, y: (${start.y}, ${end.y}) -> ${y}, z: (${start.z}, ${end.z}) -> ${z}, esigma: ${esigma}, epi: ${epi}`)
 
   return { x, y, z, esigma, epi };
 }
