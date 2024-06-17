@@ -58,7 +58,7 @@ const presetLigandFields: Array<'divider' | {name: string, ligands: Array<Ligand
         }]
     },
     {
-        name: 'Td',
+        name: 'Td (C2 centered)',
         ligands: [{
             start: { x: '1', y: '1', z: '1', esigma: '1', epi: '0' },
             end: { x: '1', y: '1', z: '1', esigma: '1', epi: '0' },
@@ -77,6 +77,29 @@ const presetLigandFields: Array<'divider' | {name: string, ligands: Array<Ligand
         {
             start: { x: '-1', y: '1', z: '-1', esigma: '1', epi: '0' },
             end: { x: '-1', y: '1', z: '-1', esigma: '1', epi: '0' },
+            fixed: true
+        }]
+    },
+    {
+        name: 'Td (C3 centered)',
+        ligands: [{
+            start: { x: '1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            end: { x: '1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: true
+        },
+        {
+            start: { x: '-1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            end: { x: '-1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: true
+        },
+        {
+            start: { x: '0', y: (2/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            end: { x: '0', y: (2/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: true
+        },
+        {
+            start: { x: '0', y: '0', z: (3/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            end: { x: '0', y: '0', z: (3/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
             fixed: true
         }]
     },
@@ -105,6 +128,29 @@ const presetLigandFields: Array<'divider' | {name: string, ligands: Array<Ligand
                 fixed: false
             }
         ]
+    },
+    {
+        name: 'D3h \u2192 C3v',
+        ligands: [{
+            start: { x: '1', y: (-1/Math.sqrt(3)).toString(), z: '0', esigma: '1', epi: '0' },
+            end: { x: '1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: false
+        },
+        {
+            start: { x: '-1', y: (-1/Math.sqrt(3)).toString(), z: '0', esigma: '1', epi: '0' },
+            end: { x: '-1', y: (-1/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: false
+        },
+        {
+            start: { x: '0', y: (2/Math.sqrt(3)).toString(), z: '0', esigma: '1', epi: '0' },
+            end: { x: '0', y: (2/Math.sqrt(3)).toString(), z: (-1/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: false
+        },
+        {
+            start: { x: '0', y: '0', z: (3/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            end: { x: '0', y: '0', z: (3/Math.sqrt(6)).toString(), esigma: '1', epi: '0' },
+            fixed: false
+        }]
     }
 ]
 export default presetLigandFields;

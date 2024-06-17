@@ -1,9 +1,10 @@
 import React from 'react';
-import { Paper } from '@mui/material';
+import { Paper, Stack } from '@mui/material';
 import { useLigandField, validateLigandInput, useLigandFieldDispatch, HoverAction, interpolate, toSpherical } from './LigandFieldContext';
 import { ChartsAxisHighlight, ChartsClipPath, ChartsTooltip, ChartsXAxis, ChartsYAxis, LinePlot, ResponsiveChartContainer, useDrawingArea, useXScale } from '@mui/x-charts';
 import useId from '@mui/utils/useId';
 import { ScaleLinear } from 'd3-scale';
+import * as math from 'mathjs';
 
 function XValue(props: { svgRef: React.RefObject<SVGElement>, selectedState: number, onChange?: (x: number | null)=>void }) {
     const { svgRef } = props;
@@ -46,12 +47,11 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
     const dispatch = useLigandFieldDispatch();
     const [steps, setSteps] = React.useState<number>(50);
 
-    const dataset = Array<{rxnCoordinate: number, 'z2': number, 'yz': number, 'xz': number, 'xy': number, 'x2-y2': number}>();
+    const dataset = Array<{rxnCoordinate: number, 'psi0': number, 'psi1': number, 'psi2': number, 'psi3': number, 'psi4': number}>();
     const matrices = Array<Array<number>>(steps+1);
     for (let step = 0; step <= steps; step++) {
         const rxnCoordinate = step / steps;
-        let matrix = new Array<number>(25);
-        let energy = [0,0,0,0,0];
+        let matrix = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         for (const ligandInput of ligandField.ligands) {
             const ligand = validateLigandInput(ligandInput);
             if (ligand === null) continue;
@@ -63,30 +63,56 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
             const angles = toSpherical(x,y,z);
             if (angles === null) continue;
             const {theta, phi} = angles;
-            
-            const mat = [
-                0.25 * (1 + 3*Math.cos(2*theta)), 0, -0.866025 * Math.sin(2*theta), 0, 0.433013 * (1 - Math.cos(2*theta)),
-                0.866025 * Math.sin(phi) * Math.sin(2*theta), Math.cos(phi)*Math.cos(theta), Math.sin(phi)*Math.cos(2*theta), -1*Math.cos(phi)*Math.sin(theta), -0.5*Math.sin(phi)*Math.sin(2*theta),
-                0.866025 * Math.cos(phi) * Math.sin(2*theta), -1*Math.sin(phi)*Math.cos(theta), Math.cos(phi)*Math.cos(2*theta), Math.sin(phi)*Math.sin(theta), -0.5*Math.cos(phi)*Math.sin(2*theta),
-                0.433013 * Math.sin(2*phi) * (1 - Math.cos(2*theta)), Math.cos(2*phi)*Math.sin(theta), 0.5 * Math.sin(2*phi)*Math.sin(2*theta), Math.cos(2*phi)*Math.cos(theta), 0.25 * Math.sin(2*phi) * (3 + Math.cos(2*theta)),
-                0.433013 * Math.cos(2*phi) * (1 - Math.cos(2*theta)), -1*Math.sin(2*phi)*Math.sin(theta), 0.5 * Math.cos(2*phi)*Math.sin(2*theta), -1*Math.sin(2*phi)*Math.cos(theta), 0.25 * Math.cos(2*phi) * (3 + Math.cos(2*theta))
-            ];
-            const mat2 = mat.map(x => x*x);
+            const psi = 0;
 
-            matrix = matrix.map((x,j) => x + mat[j]);
-            energy = energy.map((x,j) => x + esigma*mat2[j*5] + epi*(mat[j*5+1] + mat[j*5+2]));
+            //Figgis pg 61
+            const fSigma = [
+                (1 + 3*Math.cos(2*theta)) / 4,
+                (Math.sqrt(3) * Math.sin(phi) * Math.sin(2*theta)) / 2,
+                (Math.sqrt(3) * Math.cos(phi) * Math.sin(2*theta)) / 2,
+                (Math.sqrt(3) * Math.sin(2*phi) * (1 - Math.cos(2*theta))) / 4,
+                (Math.sqrt(3) * Math.cos(2*phi) * (1 - Math.cos(2*theta))) / 4  
+            ];
+
+            const fPiy = [
+                (Math.sqrt(3) * Math.cos(2*phi) * Math.sin(2*theta) * Math.sin(psi)) / 2,
+                Math.cos(phi) * Math.cos(theta) * Math.cos(psi) - Math.sin(phi) * Math.cos(2*theta) * Math.sin(psi),
+                -Math.sin(phi) * Math.cos(theta) * Math.cos(psi) - Math.cos(phi) * Math.cos(2*theta) * Math.sin(psi),
+                Math.cos(2*phi) * Math.sin(theta) * Math.cos(psi) - (Math.sin(2*phi) * Math.sin(2*theta) * Math.sin(psi) / 2),
+                -Math.sin(2*phi) * Math.sin(theta) * Math.cos(psi) - (Math.cos(2*phi) * Math.sin(2*theta) * Math.sin(psi) / 2)
+            ];
+
+            const fPix = [
+                (-Math.sqrt(3) * Math.cos(2*phi) * Math.sin(2*theta) * Math.cos(psi)) / 2,
+                Math.cos(phi) * Math.cos(theta) * Math.sin(psi) + Math.sin(phi) * Math.cos(2*theta) * Math.cos(psi),
+                -Math.sin(phi) * Math.cos(theta) * Math.sin(psi) + Math.cos(phi) * Math.cos(2*theta) * Math.cos(psi),
+                Math.cos(2*phi) * Math.sin(theta) * Math.sin(psi) + (Math.sin(2*phi) * Math.sin(2*theta) * Math.cos(psi) / 2),
+                -Math.sin(2*phi) * Math.sin(theta) * Math.sin(psi) + (Math.cos(2*phi) * Math.sin(2*theta) * Math.cos(psi) / 2)
+            ];
+
+            for (let i = 0; i < 5; i++)
+                for (let j = 0; j < 5; j++)
+                    matrix[i*5+j] += fSigma[i] * fSigma[j] * esigma + fPiy[i] * fPiy[j] * epi + fPix[i] * fPix[j] * epi;
         }
-        
+
+        console.log([matrix.slice(0,5), matrix.slice(5,10), matrix.slice(10,15), matrix.slice(15,20), matrix.slice(20,25)])
+        const mat = math.matrix([matrix.slice(0,5), matrix.slice(5,10), matrix.slice(10,15), matrix.slice(15,20), matrix.slice(20,25)]);
+        const eig = math.eigs(mat, {eigenvectors: true, precision: 1e-6});
+        const energies = (eig.values as math.Matrix).toArray() as Array<number>;
+        const wavefunctions = eig.eigenvectors;
+        console.log(energies);
+        console.log(wavefunctions);
+
         const floor = (x:number) => (Math.abs(x) < 1e-8 ? 0 : x);
         
         matrices[step] = matrix;
         dataset.push({
             rxnCoordinate,
-            'z2': floor(energy[0]),
-            'yz': floor(energy[1]),
-            'xz': floor(energy[2]),
-            'xy': floor(energy[3]),
-            'x2-y2': floor(energy[4]),
+            'psi0': floor(energies[0]),
+            'psi1': floor(energies[1]),
+            'psi2': floor(energies[2]),
+            'psi3': floor(energies[3]),
+            'psi4': floor(energies[4]),
         });
     };
 
@@ -103,34 +129,36 @@ export default function FixedLigandFieldEnergies(props: { sx?: any }) {
         dispatch(action);
     }
 
+    console.log(dataset);
+
     return (
         <Paper sx= { props.sx }>
             <div css={{ width: "100%", height: "100%" }}>
-            <ResponsiveChartContainer
-                ref={svgRef}
-                xAxis={[{
-                    dataKey: 'rxnCoordinate',
-                    valueFormatter: value => `${(Math.max(0,Math.min(1,value)) * 100).toFixed(0)}%`,
-                    min: 0,
-                    max: 1,
-                }]}
-                series={['z2','yz','xz','xy','x2-y2'].map((name, i) => ({
-                    type: 'line',
-                    dataKey: name,
-                    label: `d${name}`,
-                    showMark: false,
-                }))}
-                dataset={dataset}>
-                <g clipPath={`url(#${clipPathId})`}>
-                    <LinePlot/>
-                </g>
-                <ChartsClipPath id={clipPathId} />
-                <ChartsTooltip />
-                <ChartsAxisHighlight />
-                <ChartsXAxis label={`reaction coordinate = ${`${(Math.max(0,Math.min(1,ligandField.selectedState)) * 100).toFixed(0)}%`}`}/>
-                <ChartsYAxis label='one-electron energy'/>
-                <XValue svgRef={svgRef} onChange={handleHover} selectedState={ligandField.selectedState}/>
-            </ResponsiveChartContainer>
+                <ResponsiveChartContainer
+                    ref={svgRef}
+                    xAxis={[{
+                        dataKey: 'rxnCoordinate',
+                        valueFormatter: value => `${(Math.max(0,Math.min(1,value)) * 100).toFixed(0)}%`,
+                        min: 0,
+                        max: 1,
+                    }]}
+                    series={[0,1,2,3,4].map((i) => ({
+                        type: 'line',
+                        dataKey: `psi${i}`,
+                        label: `\u03A8${i}`,
+                        showMark: false,
+                    }))}
+                    dataset={dataset}>
+                    <g clipPath={`url(#${clipPathId})`}>
+                        <LinePlot/>
+                    </g>
+                    <ChartsClipPath id={clipPathId} />
+                    <ChartsTooltip />
+                    <ChartsAxisHighlight />
+                    <ChartsXAxis label={`reaction coordinate = ${`${(Math.max(0,Math.min(1,ligandField.selectedState)) * 100).toFixed(0)}%`}`}/>
+                    <ChartsYAxis label='one-electron energy'/>
+                    <XValue svgRef={svgRef} onChange={handleHover} selectedState={ligandField.selectedState}/>
+                </ResponsiveChartContainer>
             </div>
         </Paper>
     );
