@@ -37,7 +37,7 @@ function XValue(props: { svgRef: React.RefObject<SVGElement>, selectedState: num
     return (<line strokeWidth={0.25} strokeDasharray={2} stroke='black' x1={axisScale(props.selectedState)} x2={axisScale(props.selectedState)} y1={top} y2={top + height}></line>);
 }
 
-export default function LigandFieldEnergies(props: { sx?: any, steps: number, dataset: Array<{rxnCoordinate: number, 'z2': number, 'yz': number, 'xz': number, 'xy': number, 'x2-y2': number}>, palette: ChartsColorPalette}) {
+export default function LigandFieldEnergies(props: { sx?: any, steps: number, dataset: Array<{rxnCoordinate: number, 'psi0': number, 'psi1': number, 'psi2': number, 'psi3': number, 'psi4': number}>, palette: ChartsColorPalette}) {
     const ligandField = useLigandField();
     const clipPathId = `${useId()}-clip-path`;
     const dispatch = useLigandFieldDispatch();
@@ -63,10 +63,10 @@ export default function LigandFieldEnergies(props: { sx?: any, steps: number, da
                     min: 0,
                     max: 1,
                 }]}
-                series={['z2', 'yz', 'xz', 'xy', 'x2-y2'].map((name,i) => ({
+                series={[0,1,2,3,4].map((i) => ({
                     type: 'line',
-                    dataKey: name,
-                    label: `d${name}'`,
+                    dataKey: `psi${i}`,
+                    label: `\u03C8${i}`,
                     showMark: false,
                 }))}
                 dataset={props.dataset}>

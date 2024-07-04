@@ -3,11 +3,11 @@ import { useTheme, Paper, TableContainer, Table, TableHead, TableRow, TableCell,
 
 export default function LigandFieldWavefunctions(props: { sx?: any, eigenvectors: Array<number>, palette: string[]}) {
     const theme = useTheme();
-    const round = (x: number) => x.toFixed(2);
+    const round = (x: number) => (x < 0 ? '' : '\u00A0') + x.toFixed(2);
 
     return (
         <TableContainer component={Paper} sx= {{ ...props.sx, overflow: 'auto', scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' } }}>
-            <Table>
+            <Table size='small'>
                 <TableHead>
                     <TableRow>
                     <TableCell align="right">dz2</TableCell>

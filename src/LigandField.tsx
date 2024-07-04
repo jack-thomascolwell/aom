@@ -15,7 +15,7 @@ export default function LigandField() {
     const theme = useTheme();
     const palette: ChartsColorPalette = blueberryTwilightPalette(theme.palette.mode);
 
-    const dataset = Array<{rxnCoordinate: number, 'z2': number, 'yz': number, 'xz': number, 'xy': number, 'x2-y2': number}>();
+    const dataset = Array<{rxnCoordinate: number, 'psi0': number, 'psi1': number, 'psi2': number, 'psi3': number, 'psi4': number}>();
     const matrices = Array<Array<number>>(steps+1);
     const eigenvectors = Array<Array<number>>(steps+1);
     const energies = Array<Array<number>>(steps+1);
@@ -36,6 +36,7 @@ export default function LigandField() {
             const psi = 0;
 
             //Figgis pg 61
+            // z2, yz, xz, xy, x2-y2
             const fSigma = [
                 (1 + 3*Math.cos(2*theta)) / 4,
                 (Math.sqrt(3) * Math.sin(phi) * Math.sin(2*theta)) / 2,
@@ -102,15 +103,14 @@ export default function LigandField() {
         energies[step] = [0,0,0,0,0];
         for (let i = 0; i < 5; i++)
             energies[step][i] = floor(energiesUnordered[ordering[i]]);
-        
 
         dataset.push({
             rxnCoordinate,
-            'z2':    energies[step][0],
-            'yz':    energies[step][1],
-            'xz':    energies[step][2],
-            'xy':    energies[step][3],
-            'x2-y2': energies[step][4],
+            'psi0':    energies[step][0],
+            'psi1':    energies[step][1],
+            'psi2':    energies[step][2],
+            'psi3':    energies[step][3],
+            'psi4': energies[step][4],
         });
     };
 
