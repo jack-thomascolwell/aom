@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Stack, Typography, Fab, Menu, MenuItem, Divider, Tooltip } from '@mui/material';
+import { useTheme, Paper, Stack, Typography, Fab, Menu, MenuItem, Divider, Tooltip } from '@mui/material';
 import {Add, Upload, Download} from '@mui/icons-material';
 import LigandInputComponent from './LigandInput';
 import { useLigandField, useLigandFieldDispatch, LigandInput, AddAction, ImportAction, ligandsToCSV, CSVtoLigands} from './LigandFieldContext';
@@ -8,6 +8,7 @@ import presetLigandEnergies from './presets/LigandEnergies';
 
 
 export default function LigandFieldInput(props: { sx?: any }) {
+    const theme = useTheme();
     const ligandField = useLigandField();
     const dispatch = useLigandFieldDispatch();
 
@@ -73,27 +74,29 @@ export default function LigandFieldInput(props: { sx?: any }) {
         a.setAttribute('href', URL.createObjectURL(file));
         a.click();
     };
-
     return (
-        <Paper sx= { props.sx }>
-            <Stack direction='row' justifyContent='flex-end' alignItems='flex-end' useFlexGap p={1} spacing={1}>
-                <Typography variant='h3' sx={{marginRight: 'auto'}} >Ligands</Typography>
-                <Fab color="primary" size="small" onClick={ handleDownload }>
-                    <Tooltip title="Export ligand field" arrow>
-                        <Download />
-                    </Tooltip>
-                </Fab>
-                <Fab color="primary" size="small" onClick={handleImportLigandFieldClick}>
-                    <Tooltip title="Import ligand field" arrow>
-                        <Upload />
-                    </Tooltip>
-                </Fab>
-                <Fab color="primary" size="small" onClick={handleNewLigandClick}>
-                    <Tooltip title="New ligand" arrow>
-                        <Add />
-                    </Tooltip>
-                </Fab>
-            </Stack>
+        <Paper sx= {{ ...props.sx, overflowY: 'auto', scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' } }}>
+            <div css={{position: 'sticky', top: 0, backgroundColor: theme.palette.background.paper, zIndex: 1}}>
+                <Stack direction='row' justifyContent='flex-end' alignItems='flex-end' useFlexGap p={1} spacing={1}>
+                    <Typography variant='h3' sx={{marginRight: 'auto'}} >Ligands</Typography>
+                    <Fab color="primary" size="small" onClick={ handleDownload }>
+                        <Tooltip title="Export ligand field" arrow>
+                            <Download />
+                        </Tooltip>
+                    </Fab>
+                    <Fab color="primary" size="small" onClick={handleImportLigandFieldClick}>
+                        <Tooltip title="Import ligand field" arrow>
+                            <Upload />
+                        </Tooltip>
+                    </Fab>
+                    <Fab color="primary" size="small" onClick={handleNewLigandClick}>
+                        <Tooltip title="New ligand" arrow>
+                            <Add />
+                        </Tooltip>
+                    </Fab>
+                </Stack>
+                <Divider orientation='horizontal' />
+            </div>
             <input accept=".csv" style={{ display: 'none' }} id="fileUpload" type="file" onChange={handleUpload} onClick={handleImportLigandFieldClose({failiure: true})} />
             <Menu anchorEl={importLigandFieldAnchorEl} open={Boolean(importLigandFieldAnchorEl)} onClose={handleImportLigandFieldClose({failiure: true})}>
                 <label htmlFor="fileUpload">
@@ -112,7 +115,6 @@ export default function LigandFieldInput(props: { sx?: any }) {
                     preset === 'divider' ? <Divider /> : <MenuItem onClick={handleNewLigandClose({esigma: preset.esigma, epi: preset.epi})}>{preset.name}</MenuItem>
                 )}
             </Menu>
-            <Divider orientation='horizontal' />
             {
                 ligandField.ligands.map((ligand,i) => (
                     <LigandInputComponent key={i} sx={{width: '100%'}} index={i} />
