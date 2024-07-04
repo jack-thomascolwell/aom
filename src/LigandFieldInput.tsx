@@ -38,7 +38,6 @@ export default function LigandFieldInput(props: { sx?: any }) {
         return () => {
             setImportLigandFieldAnchorEl(null);
             if (values.failiure || values.ligands === undefined) return;
-            
             const action: ImportAction = {
                 type: 'imported',
                 ligands: values.ligands
@@ -59,6 +58,7 @@ export default function LigandFieldInput(props: { sx?: any }) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const ligands = CSVtoLigands(e.target?.result as string);
+            event.target.value = '';
             if (ligands === null) handleImportLigandFieldClose({failiure: true})();
             else handleImportLigandFieldClose({ligands})();
         };
