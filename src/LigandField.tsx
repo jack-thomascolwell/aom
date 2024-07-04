@@ -3,8 +3,8 @@ import LigandFieldInput from './LigandFieldInput';
 import LigandFieldVisualizer from './LigandFieldVisualizer';
 import LigandFieldEnergies from './LigandFieldEnergies';
 import LigandFieldWavefunctions from './LigandFieldWavefunctions';
-import { useTheme } from '@mui/material';
-import { useLigandField, validateLigandInput, useLigandFieldDispatch, HoverAction, interpolate, toSpherical } from './LigandFieldContext';
+import { useTheme, Typography, Link } from '@mui/material';
+import { useLigandField, validateLigandInput, interpolate, toSpherical } from './LigandFieldContext';
 import * as math from 'mathjs';
 import { blueberryTwilightPalette, ChartsColorPalette } from '@mui/x-charts/colorPalettes';
 
@@ -115,7 +115,7 @@ export default function LigandField() {
     };
 
     return (
-        <div css={{display: 'grid', gridTemplateRows: '1fr auto', gridTemplateColumns: '45fr 30fr 25fr', width: '100vw', height: '100vh', padding: theme.spacing(1), gridGap: theme.spacing(2)}}>
+        <div css={{display: 'grid', gridTemplateRows: '1fr auto auto', gridTemplateColumns: '45fr 30fr 25fr', width: '100vw', height: '100vh', padding: theme.spacing(1), gridRowGap: 0, gridColumnGap: theme.spacing(2) }}>
             <div css={{gridRow: '1/3', gridColumn: '1/1', width: '100%', height: '100%'}}>
                 <LigandFieldInput sx={{width: "100%", height: "100%", maxHeight: '100%', maxWidth: '100%' }}/>
             </div>
@@ -125,8 +125,11 @@ export default function LigandField() {
             <div css={{gridRow: '1/2', gridColumn: '3/3', width: '100%', height: '100%'}}>
                 <LigandFieldVisualizer sx={{width: "100%", height: "100%", maxHeight: '100%', maxWidth: '100%' }}/>
             </div>
-            <div css={{gridRow: '2/3', gridColumn: '3/3', width: '100%', height: '100%'}}>
+            <div css={{gridRow: '2/3', gridColumn: '3/3', width: '100%', height: '100%', paddingTop: theme.spacing(2)}}>
                 <LigandFieldWavefunctions sx={{width: "100%", height: "100%", maxHeight: '100%', maxWidth: '100%' }} eigenvectors={eigenvectors[Math.floor(Math.max(0,Math.min(1,ligandField.selectedState)) * steps + 0.5)]}  palette={palette}/>
+            </div>
+            <div css={{textAlign: 'right', gridRow: '3/3', gridColumn: '1/4', width: '100%', height: '100%', paddingTop: theme.spacing(1)}}>
+                <Typography variant='caption'>TODO: <Link href='#'>citation</Link></Typography>
             </div>
         </div>
     )
