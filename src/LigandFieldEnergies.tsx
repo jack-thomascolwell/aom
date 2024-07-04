@@ -66,7 +66,7 @@ export default function LigandFieldEnergies(props: { sx?: any, steps: number, da
                 series={['z2', 'yz', 'xz', 'xy', 'x2-y2'].map((name,i) => ({
                     type: 'line',
                     dataKey: name,
-                    label: `d${name}`,
+                    label: `d${name}'`,
                     showMark: false,
                 }))}
                 dataset={props.dataset}>

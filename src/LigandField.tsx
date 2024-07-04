@@ -115,7 +115,7 @@ export default function LigandField() {
     };
 
     return (
-        <div css={{display: 'grid', gridTemplateRows: '1fr 1fr', gridTemplateColumns: '45fr 30fr 25fr', width: '100vw', height: '100vh', padding: theme.spacing(1), gridGap: theme.spacing(2)}}>
+        <div css={{display: 'grid', gridTemplateRows: '1fr auto', gridTemplateColumns: '45fr 30fr 25fr', width: '100vw', height: '100vh', padding: theme.spacing(1), gridGap: theme.spacing(2)}}>
             <div css={{gridRow: '1/3', gridColumn: '1/1', width: '100%', height: '100%'}}>
                 <LigandFieldInput sx={{width: "100%", height: "100%", maxHeight: '100%', maxWidth: '100%' }}/>
             </div>
