@@ -2,7 +2,9 @@ import * as React from 'react';
 import LigandField from './LigandField';
 import { LigandFieldProvider } from './LigandFieldContext';
 
-// TODO: maybe add navbar and option for problem set / tutorial
+/*
+Main app component
+*/
 
 export default function App() {
   return (

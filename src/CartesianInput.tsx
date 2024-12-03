@@ -2,7 +2,9 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-
+/*
+Component for inputting (x,y,z) coordinates. The input is split into three text fields surrounded by parentheses
+*/
 export default function CartesianInput(props: {sx?: any, sxInput?: any, onChange?: React.ChangeEventHandler, onFocus?: React.FocusEventHandler, onBlur?: React.FocusEventHandler, value: { x: string, y: string, z: string}}): JSX.Element {
     return (<>
         <Stack direction='row' alignItems='stretch' justifyContent='flex-start' useFlexGap spacing={0.5} sx={[props.sx, {

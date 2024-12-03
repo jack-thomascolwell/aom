@@ -10,6 +10,9 @@ import { CheckBox, CheckBoxOutlineBlank, Download, ArrowDropDown, Square, Menu a
 import { Ligand, LigandState, interpolate, useLigandField, validateLigandInput } from './LigandFieldContext';
 import orbitals from './orbitals/Orbitals';
 
+/*
+Component for visualizing the ligand field. Uses ThreeJS to show the complex as a ball and stick model with postions changing to match the reaction coordinate
+*/
 export default function LigandVisualizerComponent(props: { sx?: any}) {
     const theme = useTheme();
     const ligandField = useLigandField();

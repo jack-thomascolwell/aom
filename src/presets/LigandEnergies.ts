@@ -1,3 +1,7 @@
+/*
+Preset list of ligands that can be selected via dropdown. values of 'divider' indicate a horizontal line in the list
+*/
+
 const presetLigandEnergies: Array<'divider' | {name: string, esigma?: string, epi?: string}> = [
     {
         name: '\u03C3-only',

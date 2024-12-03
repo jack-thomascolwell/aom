@@ -4,6 +4,9 @@ import { ArrowDownward, ArrowUpward, Close, SubdirectoryArrowRight }from '@mui/i
 import { useLigandField, useLigandFieldDispatch, validateLigandStateInput, ChangeValueAction, FocusAction, BlurAction, ChangeFixedAction, DeleteAction} from './LigandFieldContext';
 import CartesianInput from "./CartesianInput";
 
+/*
+Component for inputting a ligand's position and energy parameters. Allows variation from start to end state
+*/
 export default function LigandInputComponent(props: {sx?: any, index: number}) {
     const ligandField = useLigandField();
     const dispatch = useLigandFieldDispatch();

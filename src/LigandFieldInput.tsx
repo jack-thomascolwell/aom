@@ -6,7 +6,9 @@ import { useLigandField, useLigandFieldDispatch, LigandInput, AddAction, ImportA
 import presetLigandFields from './presets/LigandFields';
 import presetLigandEnergies from './presets/LigandEnergies';
 
-
+/*
+Component for gettign user input for the ligand field. Allows uploading, downloading, and manual input of ligands
+*/
 export default function LigandFieldInput(props: { sx?: any }) {
     const theme = useTheme();
     const ligandField = useLigandField();

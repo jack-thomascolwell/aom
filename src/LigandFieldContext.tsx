@@ -1,6 +1,10 @@
 import React, { Key } from 'react';
 import { useImmerReducer } from "use-immer";
 
+/*
+React context for the application. Stores ligand field input and selected states. Provides functions for validating input, interpolation between start and end positions, and conversion between spherical and cartesian coordinates.
+*/
+
 export type LigandField = {
   ligands: Array<LigandInput>,
   selected: number,

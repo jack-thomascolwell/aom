@@ -1,6 +1,10 @@
 import React from 'react';
 import { useTheme, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 
+
+/*
+Component to display the AOM wavefunctions as a table. Coefficients are normalized
+*/
 export default function LigandFieldWavefunctions(props: { sx?: any, eigenvectors: Array<number>, palette: string[]}) {
     const theme = useTheme();
     const round = (x: number) => (x < 0 ? '' : '\u00A0') + x.toFixed(2);

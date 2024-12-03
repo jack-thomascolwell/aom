@@ -1,5 +1,7 @@
 import { LigandInput } from "../LigandFieldContext";
-
+/*
+Preset list of ligand fields that can be selected via dropdown. values of 'divider' indicate a horizontal line in the list
+*/
 const presetLigandFields: Array<'divider' | {name: string, ligands: Array<LigandInput>}> = [
     {
         name: 'Oh',

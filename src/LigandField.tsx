@@ -8,6 +8,10 @@ import { useLigandField, validateLigandInput, interpolate, toSpherical } from '.
 import * as math from 'mathjs';
 import { blueberryTwilightPalette, ChartsColorPalette } from '@mui/x-charts/colorPalettes';
 
+/*
+Main component for ligand field input and output. Hanldes the ligand field input and computes the AOM matrices, energies, and wavefunctions
+*/
+
 export default function LigandField() {
     // energy and eigenvector calculations
     const ligandField = useLigandField();
