@@ -16,7 +16,7 @@ const presetLigandEnergies: Array<'divider' | {name: string, esigma?: string, ep
     },
     'divider',
     {
-        name: 'H20',
+        name: 'H2O',
         esigma: '7490',
         epi: '1390'
     },
@@ -34,6 +34,11 @@ const presetLigandEnergies: Array<'divider' | {name: string, esigma?: string, ep
         name: 'CN-',
         esigma: '8310',
         epi: '-290'
+    },
+    {
+        name: 'CO',
+        esigma: '14500',
+        epi: '-1750',
     },
     {
         name: 'py',
